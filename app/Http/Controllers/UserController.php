@@ -8,6 +8,7 @@ use App\Models\Gender;
 use App\Models\Location;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Image;
 
 class UserController extends Controller
 {
@@ -15,8 +16,10 @@ class UserController extends Controller
     public function getAllNearestUsers(){
 
         if (session()->has('id') && session()->has('user')){
-            $user = User::where('id', session()->has('id'))->first();
-            //return $user->location->lat;
+
+            $user = User::where('id', session('id'))->first();
+
+            // build query to find nearest users
             $query = "SELECT u.id, u.name, u.user_image, u.dob, g.gender, ROUND(6353 * 2 * ASIN(SQRT( POWER(SIN(({$user->location->lat} -
               abs(loc.lat)) * pi()/180 / 2),2) + COS(loc.lat * pi()/180 ) * COS(
               abs({$user->location->lat}) *  pi()/180) * POWER(SIN(({$user->location->lon} - loc.lon) *  pi()/180 / 2), 2) )), 2) as distance
@@ -25,6 +28,7 @@ class UserController extends Controller
               INNER join genders g on u.gender_id = g.id 
               where user_id <>". session('id')."
               HAVING distance < ".self::MIN_DISTANCE;
+
             $nearest_users = DB::select($query);
             //return $nearest_users;
             return view('user/nearest_users_dashboard', ['users' => $nearest_users]);
@@ -70,6 +74,16 @@ class UserController extends Controller
         ];
 
         Location::insert($location);
+
+        // add image to user table
+        if ($request->hasFile('user_image')){ //if file submitted through this form with name product_image
+            $image_to_upload = $request->user_image;
+            $file_name = $last_inserted_id.'.'.$image_to_upload->getClientOriginalExtension();
+            Image::make($image_to_upload)->resize(400,450)->save(base_path('public/uploads/user_images/'.$file_name));
+            User::findOrFail($last_inserted_id)->update([
+                'user_image'=>$file_name
+            ]);
+        }
 
         return back()->with('status', 'Registration Success.');
     }

@@ -23,6 +23,7 @@ Route::get('/', function () {
 //Route::view('/user/login','login');
 Route::get('/user/login/view',[UserAuthController::class,'showLoginView'])->name('login-view');
 Route::post('/user/login',[UserAuthController::class,'login']);
+Route::get('/user/logout',[UserAuthController::class,'logout']);
 
 Route::get('/user/registration/view', [UserController::class, 'registrationView']);
 Route::get('/nearest/users', [UserController::class, 'getAllNearestUsers'])->name('nearest-users');

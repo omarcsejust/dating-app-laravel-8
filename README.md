@@ -7,19 +7,17 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
 </p>
 
-## About Laravel
+## About Dating App
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+This App is developed in Laravel 8
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
-
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Registration with Name, Email, Password, Location (PC/Browser geolocation - latitude, longitude), Date of Birth and Gender
+- Upload single profile photo
+- Login panel with email and password
+- See other user list (in a table or any other simplified view) around 5 KM (Using geolocation distance driven query)
+- Show user Name, image, distance, gender and age in user list
+- A like and dislike button for each user. Keep like and dislike mapping in database.
+- Mutual like indication - Show a popup with a message (It's a Match!) if user like one person and the liked person previously likes him. ( Use Case: Consider two user - ‘A’ and ‘B’ . User ‘A’ logged in and likes ‘B’s profile. Once ‘B’ logged in and likes ‘A’s profile - a simple popup will be invoked with the message.)
 
 ## Learning Laravel
 
@@ -43,10 +41,6 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 - **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
 - **[DevSquad](https://devsquad.com)**
 - **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
 ## Code of Conduct
 

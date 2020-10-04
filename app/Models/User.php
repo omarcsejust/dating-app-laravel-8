@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'user_image',
     ];
 
     //validate customer
@@ -31,8 +32,16 @@ class User extends Authenticatable
             'password' => 'required',
             'gender_id' => 'required|integer',
             'dob' => 'required',
-            'user_image' => 'file|size:512', // Validate that an uploaded file is exactly 512 kilobytes...
+            'user_image' => 'image|max:100', // Validate that an uploaded file is exactly 512 kilobytes...
         ]);
+    }
+
+    /**
+     * Get the location record associated with the user.
+     */
+    public function location()
+    {
+        return $this->hasOne(Location::class);
     }
 
     /**
@@ -53,12 +62,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /**
-    * Get the location record associated with the user.
-    */
-    public function location()
-    {
-        return $this->hasOne(Location::class, 'user_id');
-    }
 }

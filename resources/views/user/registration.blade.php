@@ -60,7 +60,7 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="user_image">User Photo</label>
+                                <label for="user_image">Upload a Photo</label>
                                 <input type="file" class="form-control" name="user_image">
                             </div>
 
