@@ -7,7 +7,7 @@
         <div class="row d-flex align-items-center justify-content-center" style="height: 350px">
             <div class="col-md-4">
                 <div class="card shadow">
-                    <div class="card-header">
+                    <div class="card-header text-center">
                         Sign In
                     </div>
                     <div class="card-body">

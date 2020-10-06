@@ -6,18 +6,27 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Gender;
 use App\Models\Location;
+use App\Models\LikeDislike;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Image;
 
 class UserController extends Controller
 {
-    const MIN_DISTANCE = 50; // in KM
-    public function getAllNearestUsers(){
+    const MIN_DISTANCE = 6; // in KM
 
+    /**
+     * find nearest users and like-dislike result for logged user
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     */
+    public function getAllNearestUsers(){
         if (session()->has('id') && session()->has('user')){
 
             $user = User::where('id', session('id'))->first();
+
+            // get liked or disliked users by logged in user
+            $like_dislike_data = LikeDislike::where('user_id',session('id'))->get();
 
             // build query to find nearest users
             $query = "SELECT u.id, u.name, u.user_image, u.dob, g.gender, ROUND(6353 * 2 * ASIN(SQRT( POWER(SIN(({$user->location->lat} -
@@ -31,7 +40,7 @@ class UserController extends Controller
 
             $nearest_users = DB::select($query);
             //return $nearest_users;
-            return view('user/nearest_users_dashboard', ['users' => $nearest_users]);
+            return view('user/nearest_users_dashboard', ['users' => $nearest_users, 'like_dislikes' => $like_dislike_data]);
         }else{
             return redirect()->route('login-view');
         }
@@ -53,7 +62,7 @@ class UserController extends Controller
         $user = [
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password,
+            'password' => Hash::make($request->password),
             'gender_id' => $request->gender_id,
             'dob' => $request->dob,
             'created_at' => Carbon::now()

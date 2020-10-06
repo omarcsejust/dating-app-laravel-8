@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserAuthController;
+use App\Http\Controllers\LikeDislikeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,10 +22,16 @@ Route::get('/', function () {
 });
 
 //Route::view('/user/login','login');
+
+// Auth routes
 Route::get('/user/login/view',[UserAuthController::class,'showLoginView'])->name('login-view');
 Route::post('/user/login',[UserAuthController::class,'login']);
 Route::get('/user/logout',[UserAuthController::class,'logout']);
 
+// User routes
 Route::get('/user/registration/view', [UserController::class, 'registrationView']);
 Route::get('/nearest/users', [UserController::class, 'getAllNearestUsers'])->name('nearest-users');
 Route::post('/user/registration', [UserController::class, 'addUser']);
+
+// Like dislike routes
+Route::post('/like/user', [LikeDislikeController::class, 'postLikeUserProfile']);

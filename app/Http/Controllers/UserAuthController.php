@@ -6,9 +6,15 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Hash;
 
 class UserAuthController extends Controller
 {
+    /**
+     * show login form if user is not logged in
+     * or redirect to user dashboard
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function showLoginView(){
         //check user is logged in or not
         if (session()->has('id') && session()->has('user'))
@@ -24,21 +30,22 @@ class UserAuthController extends Controller
             'password' => 'required'
         ]);
 
-        $result = User::where('email', $request->email)
-            ->where('password', $request->password)
-            ->first();
+        $user = User::where('email', '=', $request->email)->first();
+        if (isset($user)){
+            //check Hash password match or not
+            $is_matched = Hash::check($request->password, $user->password);
+            if($is_matched){
+                // set session
+                $request->session()->put('user', $user->name);
+                $request->session()->put('id', $user->id);
 
-        if (isset($result)){
-            // set session
-            $request->session()->put('user', $result->name);
-            $request->session()->put('id', $result->id);
-
-            // redirect to dashboard
-            //return redirect()->route('nearest-users', ['id' => $result->id]);
-            return redirect()->route('nearest-users');
-
+                // redirect to dashboard
+                return redirect()->route('nearest-users');
+            }else{
+                return back()->with('status', 'Invalid password!');
+            }
         }else{
-            return back()->with('status', 'Invalid email or password!');
+            return back()->with('status', 'Invalid email!');
         }
     }
 

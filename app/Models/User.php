@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Authenticatable
 {
@@ -32,7 +33,7 @@ class User extends Authenticatable
             'password' => 'required',
             'gender_id' => 'required|integer',
             'dob' => 'required',
-            'user_image' => 'image|max:100', // Validate that an uploaded file is exactly 512 kilobytes...
+            'user_image' => 'image|max:200', // Validate that an uploaded file is exactly 512 kilobytes...
         ]);
     }
 
@@ -42,6 +43,11 @@ class User extends Authenticatable
     public function location()
     {
         return $this->hasOne(Location::class);
+    }
+
+    // mutator to hash user password
+    public function setPasswordAttribute($password){
+        $this->attributes['password'] = Hash::make($password);
     }
 
     /**
