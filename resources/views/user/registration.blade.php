@@ -26,7 +26,9 @@
                             </div>
                         @endif
 
-                        <form action="{{url('user/registration')}}" method="post" enctype="multipart/form-data">
+                        <span id="ajax-error-msg"></span>
+
+                        <form action="" method="" enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
                                 <label>Name</label>
@@ -64,7 +66,7 @@
                                 <input type="file" class="form-control" name="user_image">
                             </div>
 
-                            <button type="submit" class="btn btn-block btn-primary">Sign up</button>
+                            <button type="submit" id="submit-btn" class="btn btn-block btn-primary">Sign up</button>
 
                             <label class="mt-2">Already have an account? <a href="{{url('user/login/view')}}">Sign in</a></label>
                         </form>
@@ -75,6 +77,64 @@
     </div>
 @endsection
 
-<script type="text/javascript">
-    //
-</script>
+@section('js-section')
+    <script type="text/javascript">
+
+        $('#submit-btn').on('click', (e) => {
+            e.preventDefault();
+            let CSRF_TOKEN = '{{ csrf_token() }}';
+
+            // get geo location
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(redirectToPosition);
+            } else {
+                alert("Geolocation is not supported by this browser.");
+                return;
+            }
+
+            // callback function
+            function redirectToPosition(position) {
+                let lat = position.coords.latitude;
+                let lon = position.coords.longitude;
+                //alert(lat);
+                //return;
+                $.ajax({
+                    type: "POST",
+                    url: "{{ url('user/registration') }}",
+                    dataType: 'json',
+                    data: {
+                        name: $('#name').val(),
+                        email: $('#email').val(),
+                        dob: $('#dob').val(),
+                        password: $('#password').val(),
+                        lat: lat,
+                        lon: lon,
+                        gender_id: $('input[name="gender_id"]:checked').val(),
+                        _token: CSRF_TOKEN,
+                    },
+                    success: function(response) {
+                        //here you can get response sent from server end
+                        console.log(response);
+                        if (response.status == 200){
+                            document.getElementById('ajax-error-msg').innerHTML = "<h3 style='color:green'>" + response.message + "</h3>";
+                        }
+                    },
+                    error: function(xhr) {
+                        //console.log(xhr);
+                        let response = xhr.responseText;
+                        let parsed_res = JSON.parse(response);
+                        let error_list = "";
+                        for (let key in parsed_res.errors){
+                            error_list += "<li style='color:red'>" +  parsed_res.errors[key] + "</li>";
+                        }
+                        document.getElementById('ajax-error-msg').innerHTML = "<ul>"+error_list+"</ul>";
+                    },
+                    complete: function(){
+                        //do something on complete
+                    }
+                });
+            }
+
+        });
+    </script>
+@endsection

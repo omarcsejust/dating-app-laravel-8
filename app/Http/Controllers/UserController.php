@@ -54,10 +54,13 @@ class UserController extends Controller
     public function addUser(Request $request){
         User::validateUser($request);
 
-        // get geo info
-        $geo_data = geoip()->getLocation($_SERVER['REMOTE_ADDR']);
+        // get geo info: Not working on free hosting on Heroku
+        /*$geo_data = geoip()->getLocation($_SERVER['REMOTE_ADDR']);
         $lat = isset($geo_data['lat']) ? $geo_data['lat'] : null;
-        $lon = isset($geo_data['lon']) ? $geo_data['lon'] : null;
+        $lon = isset($geo_data['lon']) ? $geo_data['lon'] : null;*/
+
+        $lat = $request->lat;
+        $lon = $request->lon;
 
         $user = [
             'name' => $request->name,
@@ -94,6 +97,8 @@ class UserController extends Controller
             ]);
         }
 
-        return back()->with('status', 'Registration Success.');
+        //return back()->with('status', 'Registration Success.');  // for form submission
+        return json_encode(['status' => 200,'message' => 'Registration Success.']);
+
     }
 }
